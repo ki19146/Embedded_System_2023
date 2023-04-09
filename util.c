@@ -35,18 +35,30 @@ void task1_dtmfDetect() {
 		while (!flag) Task_sleep(210);
 		/* TODO 3. Complete code to detect the 8 digits based on the GTZ output */
 		/* ========================= */
+		int DigitPosition[2]={0};
+		int count=0;
+		for(i = 0; i<8; i++){
+			if(gtz_out[i] != 0){
+				DigitPosition[count++] = i;}
+		}
+		if (count==2){
+			result[n]=pad[DigitPosition[0]][DigitPosition[1]-4];
+			}
+		printf("%c\n", result[n]);
+		System_flush();
+		flag = 0;
 
 		/* result[n] = ... */
 		/* ========================= */
-		printf("%c\n", result[n]);
-		flag = 0;
+
+
 	}
 	printf("\nDetection finished\n");
 	printf("Generating audio\n");
-	task2_dtmfGenerate(result);
+	//task2_dtmfGenerate(result);
 	printf("Finished\n");
 }
-
+/*
 void task2_dtmfGenerate(char* keys)
 {
 	int fs = 10000;
@@ -63,9 +75,11 @@ void task2_dtmfGenerate(char* keys)
 
 		/* buffer[..] = ... */
 		/* ========================= */
-	}
+
+//	}
 
 	/* Writing the data to a wav file */
+/*
 	FILE* fp = fopen("../answer.wav", "wb");
 	int datasize = samples_total*2;
 	int filesize = 36+datasize;
@@ -92,3 +106,4 @@ void task2_dtmfGenerate(char* keys)
 	fwrite(buffer, 2, samples_total, fp);
 	fclose(fp);
 }
+*/
