@@ -93,11 +93,23 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 	start = Timestamp_get32();
 
 	static int Goertzel_Value = 0;
+	sample = sample >>4;
 	short input = (short) (sample);
-
+	static short delay[8];
+	static short delay_1[8]={0};
+	static short delay_2[8]={0};
+	short coef[8] =
+			{ 0x6D02, 0x68AD, 0x63FC, 0x5EE7, 0x4A70, 0x4090, 0x3290, 0x23CE }; // goertzel coefficients
+	int prod1[8], prod2[8], prod3[8];
+	int i;
 	/* TODO 1. Complete the feedback loop of the GTZ algorithm*/
 	/* ========================= */
-
+	for (i=0;i<8;i++){
+		prod1[i] = (delay_1[i]*coef[i])>>14;
+	   	delay[i] = input + (short)prod1[i] - delay_2[i];
+	   	delay_2[i] = delay_1[i];
+	   	delay_1[i] = delay[i];
+	}
 
 	/* ========================= */
 	N++;
@@ -113,7 +125,17 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 
 		/* TODO 2. Complete the feedforward loop of the GTZ algorithm*/
 		/* ========================= */
-
+		for (i=0;i<8;i++){
+			prod1[i] = (delay_1[i] * delay_1[i]);
+		   	prod2[i] = (delay_2[i] * delay_2[i]);
+		   	prod3[i] = (delay_1[i] * coef[i])>>14;
+		   	prod3[i] = prod3[i] * delay_2[i];
+		   	Goertzel_Value = (prod1[i] + prod2[i] - prod3[i]) >> 15;
+		   	Goertzel_Value <<= 4; // Scale up value for sensitivity
+		   	N = 0;
+		   	delay_1[i] = delay_2[i] = 0;
+		   	gtz_out[i] = Goertzel_Value;
+			}
 		/* gtz_out[..] = ... */
 		/* ========================= */
 		flag = 1;
