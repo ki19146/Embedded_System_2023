@@ -55,10 +55,10 @@ void task1_dtmfDetect() {
 	}
 	printf("\nDetection finished\n");
 	printf("Generating audio\n");
-	//task2_dtmfGenerate(result);
+	task2_dtmfGenerate(result);
 	printf("Finished\n");
 }
-/*
+
 void task2_dtmfGenerate(char* keys)
 {
 	int fs = 10000;
@@ -68,18 +68,42 @@ void task2_dtmfGenerate(char* keys)
 	int samples_total = samples_per_tone * n_tones;
 	int i, n;
 	char digit;
+	int frow[4] = { 697, 770, 852, 941 }; // 1st tone
+	int fcol[4] = { 1209, 1336, 1477, 1633 }; // 2nd tone
+	char pad[4][4] = {{'1','2','3','A'},{'4','5','6','B'},{'7','8','9','C'},{'*','0','#','D'}};
+	int tone1;
+	int tone2;
+	int row;
+	int col;
+	int output;
 	for(n=0;n<n_tones;n++) {
 		digit = keys[n];
 		/* TODO 4. Complete the DTMF algorithm to generate audio signal based on the digits */
 		/* ========================= */
 
+		for (row = 0; row < 4; row++) {
+		    for (col = 0; col < 4; col++) {
+		      // If the element matches the target digit, return its index
+		      if (pad[row][col] == digit) {
+		        tone1 = frow[row];
+		        tone2 = fcol[col];
+
+		      }
+		    }
+		  }
+		for (i=0; i<5000; i++){
+			output = (int) (16384.0*sin(2.0*PI*tone1*i/fs) + 16384.0*sin(2.0*PI*tone2*i/fs));
+			buffer[n*samples_per_tone+i] = output;
+		}
+
+
 		/* buffer[..] = ... */
 		/* ========================= */
 
-//	}
+}
 
 	/* Writing the data to a wav file */
-/*
+
 	FILE* fp = fopen("../answer.wav", "wb");
 	int datasize = samples_total*2;
 	int filesize = 36+datasize;
@@ -106,4 +130,4 @@ void task2_dtmfGenerate(char* keys)
 	fwrite(buffer, 2, samples_total, fp);
 	fclose(fp);
 }
-*/
+
