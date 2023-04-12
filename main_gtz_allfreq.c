@@ -25,7 +25,7 @@ extern void task0_dtmfGen(void);
 extern void task1_dtmfDetect(void);
 
 extern int sample, tdiff, tdiff_final, gtz_out[8];
-extern short coef[8];
+extern short coef[8];                          //8 FREQS TO BE CALCULATED
 extern int flag;
 
 short data[NO_OF_SAMPLES];
@@ -39,13 +39,14 @@ int main() {
 	System_flush();
 
 	/* Read binary data file */
-	FILE* fp = fopen("../data.bin", "rb");
-	if(fp==0) {
+	FILE* fp = fopen("../data.bin", "rb"); //OPEN DATA FILE AND READ IN BINARY
+	if(fp==0)                              //CHECK WHETHER FILE WAS OPENED SUCCESSFUL
+	{
 		System_printf("Error: Data file not found\n");
 		System_flush();
-		return 1;
+		return 1;                      //STATUS CODE OF 1
 	}
-	fread(data, 2, NO_OF_SAMPLES, fp);
+	fread(data, 2, NO_OF_SAMPLES, fp);     //READ BINARY CODE INTO BUFFER 'DATA'
 	buffer = (short*)malloc(2*8*10000);
 
 	/* Create a Clock Instance */
@@ -92,18 +93,19 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
    	//Record start time
 	start = Timestamp_get32();
 
-	static int Goertzel_Value = 0;
-	sample = sample >>4;
-	short input = (short) (sample);
-	static short delay[8];
-	static short delay_1[8]={0};
-	static short delay_2[8]={0};
-	short coef[8] =
+	static int Goertzel_Value = 0;   //INITIALISE GOERTZEL VALUE
+	sample = sample >>4;             //SAMPLE SHFIT TO RIGHT 4 BITS TO PREVENT OVERFLOW
+	short input = (short) (sample);  //MAKE SAMPLE INTO SHORT FORM
+	static short delay[8];           //MAKE DELAY ARRAY
+	static short delay_1[8]={0};     //MAKE DELAY_1 ARRAY
+	static short delay_2[8]={0};     //MAKE DELAY_2 ARRAY
+	short coef[8] =                  //REFERING TO FREQS IN main_Onefreq.c FILE
 			{ 0x6D02, 0x68AD, 0x63FC, 0x5EE7, 0x4A70, 0x4090, 0x3290, 0x23CE }; // goertzel coefficients
 	int prod1[8], prod2[8], prod3[8];
-	int i;
+	
 	/* TODO 1. Complete the feedback loop of the GTZ algorithm*/
 	/* ========================= */
+	int i;
 	for (i=0;i<8;i++){
 		prod1[i] = (delay_1[i]*coef[i])>>14;
 	   	delay[i] = input + (short)prod1[i] - delay_2[i];
