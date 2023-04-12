@@ -106,7 +106,7 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 	/* TODO 1. Complete the feedback loop of the GTZ algorithm*/
 	/* ========================= */
 	/*Loops through the 8 Goertzel coefficients and performs the feedback loop of the GTZ algorithm*/
-	int i
+	int i;
 	for (i=0;i<8;i++){
 		prod1[i] = (delay_1[i]*coef[i])>>14;
 	   	delay[i] = input + (short)prod1[i] - delay_2[i];
