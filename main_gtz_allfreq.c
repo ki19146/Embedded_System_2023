@@ -47,8 +47,17 @@ int main() {
 		return 1;                      //STATUS CODE OF 1
 	}
 	fread(data, 2, NO_OF_SAMPLES, fp);     //READ BINARY CODE INTO BUFFER 'DATA'
-	buffer = (short*)malloc(2*8*10000);
+	
+	buffer = (short*)malloc(2*8*10000);    //ALLOCATES BLOCKS OF MEMORY (SIZE:2810000 BYTES) &
+	                                       //RETURNS A POINTER TO THE FIRST BYTE OF BLOCK
+	
+	if (buffer == NULL)                    //CHECK WHETHER MEMROY ALLCATION FAILED, IF SO, EXITS (STATUS CODE:1)
+	{
+		printf("Error: Memory allocation failed\n");
+		exit(1);
+	}
 
+	
 	/* Create a Clock Instance */
 	Clock_Params clkParams;
 
