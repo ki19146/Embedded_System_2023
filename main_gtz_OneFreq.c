@@ -40,7 +40,7 @@ void main(void)
     Clock_Params clkParams;
 
     /* Initialise Clock Instance with time period and timeout (system ticks) */
-    Clock_Params_init(&clkParams); //set before period to ensure period will be innitialized to 0
+    Clock_Params_init(&clkParams);
     clkParams.period = 1;
     clkParams.startFlag = TRUE;
 
@@ -89,40 +89,28 @@ void clk_SWI_GTZ_0697Hz(UArg arg0)
 
    	int prod1, prod2, prod3;
 
-   	short input, coef_1; //coef_1 = 0x6D02* for 0697Hz
+   	short input, coef_1;
 
-   	/*Read audio and turn into short form, then scale */
-   	R_in = mcbsp0_read(); //function to read from audio input source & store as R_in
-   	input = (short) R_in;
-   	input = input >>4; //downscale coef is 4, need to be calculated
-   	                   // scale factor = 2^(q-1) which means should be shifted to right by q-1 bits
-   	                   // q is the number of bits used to represent the input data
-
-   	/*implement the Goertzel Algorithm*/
-   	prod1 = (delay_1*coeff_1) >>14; //avoid overflow
-   	delay = input + (short)prod1 - dalay_2;
+   	coef_1 = 0x6D02; //change if want to detect other freq
+   	input = (short)sample;
+   	input = input >> 1; //scale down avoid overflow
+   	prod1 = (delay_1*coef_1)>>14;
+   	delay = input + (short)prod1 - delay_2;
    	delay_2 = delay_1;
    	delay_1 = delay;
    	N++;
-
-   	/*handling the output after setted number of samples*/
    	if (N==206)
    	{
-   		prod1 = (delay_1*delay_1);
-   		prod2 = (delay_2*delay_2);
-   		prod3 = (delay_1*coeff_1)>>14;
-   		prod3 = prod3*delay_2;
-   		Geortzel_Value = (prod1 + prod2 - prod3) >>15;
-   		Geortzel_Value << = 4; //upscale coef is 4, multiples it by 16
-   		N =0;
-   		delay_1 = delay_2 = 0; //ready to start a new cycle
+   	prod1 = (delay_1 * delay_1);
+   	prod2 = (delay_2 * delay_2);
+   	prod3 = (delay_1 * coef_1)>>14;
+   	prod3 = prod3 * delay_2;
+   	Goertzel_Value = (prod1 + prod2 - prod3) >> 15;
+   	Goertzel_Value <<= 1; // Scale up value for sensitivity
+   	N = 0;
+   	delay_1 = delay_2 = 0;
    	}
-
-   	output = (((short) R_in) * ((short)Geortzel_Value)) >>15; // q = 16 here, means 16-bit signed integer by 'short'
-   	mcbsp0_write(output& Oxfffffffe); //send signal out with the least significant bit cleared
-   	return;
-
-    //gtz_out[0] = Goertzel_Value; DONT KNOW WHATS THIS FOR?
+   	gtz_out[0] = Goertzel_Value;
 
 
 }
