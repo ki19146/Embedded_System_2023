@@ -36,13 +36,13 @@ void task1_dtmfDetect() {
 		/* TODO 3. Complete code to detect the 8 digits based on the GTZ output */
 		/* ========================= */
 		int DigitPosition[2]={0};
-		int count=0;
+		int count=0;	//count stored GTZ positions
 		for(i = 0; i<8; i++){
 			if(gtz_out[i] != 0){
-				DigitPosition[count++] = i;}
+				DigitPosition[count++] = i;}	 //store 2 non zero GTZ positions
 		}
 		if (count==2){
-			result[n]=pad[DigitPosition[0]][DigitPosition[1]-4];
+			result[n]=pad[DigitPosition[0]][DigitPosition[1]-4];	//decode 1 digit with its corresponding 2 freq 
 			}
 		printf("%c\n", result[n]);
 		System_flush();
@@ -83,17 +83,17 @@ void task2_dtmfGenerate(char* keys)
 
 		for (row = 0; row < 4; row++) {
 		    for (col = 0; col < 4; col++) {
-		      // If the element matches the target digit, return its index
+		      // If the element matches the target digit, return its position
 		      if (pad[row][col] == digit) {
-		        tone1 = frow[row];
-		        tone2 = fcol[col];
+		        tone1 = frow[row];	//get tone1 from the position
+		        tone2 = fcol[col];	//get tone2 from the position	
 
 		      }
 		    }
 		  }
 		for (i=0; i<5000; i++){
 			output = (int) (16384.0*sin(2.0*PI*tone1*i/fs) + 16384.0*sin(2.0*PI*tone2*i/fs));
-			buffer[n*samples_per_tone+i] = output;
+			buffer[n*samples_per_tone+i] = output; 	// 5000 samples per tone
 		}
 
 
