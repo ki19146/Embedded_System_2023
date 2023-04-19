@@ -88,8 +88,8 @@ void clk_SWI_Read_Data(UArg arg0) {
 }
 
 /*
- *  ====== clk_SWI_GTZ =====
- *  gtz sweep
+ *  ====== clk_SWI_GTZ =====             //IN THIS FILE, intermediate value (MENTIONED IN THE REPORT) ARE:
+ *  gtz sweep                            // prod1[8],prod2[8],prod3[8],delay[8],delay_1[8],delay_2[8],Goertzel_value
  *  ========================
  */
 void clk_SWI_GTZ_All_Freq(UArg arg0) {
